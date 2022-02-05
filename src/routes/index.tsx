@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthLayout, MainLayout } from 'containers/layouts'
-import { SignIn, SignUp, Dashboard, NotFound } from 'containers/pages'
+import { SignIn, SignUp, Posts, Post, NotFound } from 'containers/pages'
 import { withAuth } from './withAuth'
 
 const AppRoutes = () => (
@@ -11,7 +11,8 @@ const AppRoutes = () => (
         <Route path="register" element={withAuth(<SignUp />, false)} />
       </Route>
       <Route path="/" element={<MainLayout />}>
-        <Route index element={withAuth(<Dashboard />, true)} />
+        <Route index element={<Posts />} />
+        <Route path="post/:postId" element={<Post />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

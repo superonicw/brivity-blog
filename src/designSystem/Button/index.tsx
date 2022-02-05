@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 export interface ButtonProps {
   type?: 'button' | 'submit'
-  theme?: 'primary' | 'secondary'
+  theme?: 'primary' | 'secondary' | 'danger'
   size?: 'xs' | 'sm' | 'md' | 'lg'
   className?: string
   loading?: boolean
@@ -35,6 +35,8 @@ export const Button: React.FC<ButtonProps> = ({
         'hover:bg-sky-600': theme === 'primary' && !disabled,
         'bg-slate-100 text-slate-900 ': theme === 'secondary',
         'hover:bg-slate-200': theme === 'secondary' && !disabled,
+        'bg-red-500 text-white ': theme === 'danger',
+        'hover:bg-red-600': theme === 'danger' && !disabled,
         'cursor-not-allowed': disabled || loading,
       },
       className,

@@ -1,5 +1,5 @@
-const NotFound: React.FC = () => {
+const NotFoundPage: React.FC = () => {
   return <div>Not Found</div>
 }
 
-export default NotFound
+export default NotFoundPage

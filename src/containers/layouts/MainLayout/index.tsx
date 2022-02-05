@@ -3,12 +3,12 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 
 const MainLayout: React.FC = () => (
-  <div>
+  <>
     <Navbar />
-    <div className="container mx-auto pt-8">
+    <div className="container mx-auto py-16 px-12">
       <Outlet />
     </div>
-  </div>
+  </>
 )
 
 export default MainLayout

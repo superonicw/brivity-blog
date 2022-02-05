@@ -4,20 +4,18 @@ export interface SpinnerProps {
   className?: string
 }
 
-export const Spinner: React.FC<SpinnerProps> = ({ className }) => (
+export const Spinner: React.FC<SpinnerProps> = ({
+  className = 'text-white',
+}) => (
   <div className={className}>
-    <svg
-      className="animate-spin h-5 w-5 text-white"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
+    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
       <circle
         className="opacity-25"
         cx="12"
         cy="12"
         r="10"
         stroke="currentColor"
-        stroke-width="4"
+        strokeWidth="4"
       ></circle>
       <path
         className="opacity-75"

@@ -1,11 +1,11 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
-import { API_CONFIG } from 'config/api'
-import { Button, Input } from 'designSystem'
-import { apiRequest } from 'utils'
+import { Button, Input, Link } from 'designSystem'
+import { useAppProvider } from 'store/providers'
 
-const SignIn: React.FC = () => {
+const SignUpPage: React.FC = () => {
+  const { user, onSignUp } = useAppProvider()
+
   const {
     control,
     formState: { errors },
@@ -18,16 +18,10 @@ const SignIn: React.FC = () => {
     },
   })
 
-  const onSubmit = (values: any) => {
-    apiRequest(API_CONFIG.signUp(values)).then(data => {
-      console.log(data)
-    })
-  }
-
   return (
     <div className="flex flex-col items-center text-center">
       <div className="shadow px-4 pt-8 pb-4 w-96">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSignUp)}>
           <h2 className="font-semibold text-xl">Sign Up</h2>
 
           <div className="mt-8">
@@ -40,7 +34,8 @@ const SignIn: React.FC = () => {
                   {...field}
                   className="border rounded outline-none p-2 w-full"
                   placeholder="Email"
-                  error={errors.email?.type === 'required' && 'Required'}
+                  disabled={user.loading}
+                  error={errors.email && 'Required'}
                 />
               )}
             />
@@ -56,7 +51,8 @@ const SignIn: React.FC = () => {
                   {...field}
                   className="border rounded outline-none p-2 w-full"
                   placeholder="Display Name"
-                  error={errors.display_name?.type === 'required' && 'Required'}
+                  disabled={user.loading}
+                  error={errors.display_name && 'Required'}
                 />
               )}
             />
@@ -73,17 +69,27 @@ const SignIn: React.FC = () => {
                   type="password"
                   className="border rounded outline-none p-2 w-full"
                   placeholder="Password"
-                  error={errors.email?.type === 'required' && 'Required'}
+                  disabled={user.loading}
+                  error={errors.email && 'Required'}
                 />
               )}
             />
           </div>
 
-          <div className="flex justify-end gap-2 mt-4">
-            <Button type="submit" label="Submit" size="sm" />
-            <Link to="/login">
-              <Button label="Sign In" size="sm" theme="secondary" />
-            </Link>
+          <div className="flex items-center justify-end gap-4 mt-4">
+            <Button
+              type="submit"
+              label="Submit"
+              size="sm"
+              disabled={user.loading}
+              loading={user.loading}
+            />
+            <Link
+              to="/login"
+              label="Sign In"
+              className="text-slate-500 text-sm"
+              disabled={user.loading}
+            />
           </div>
         </form>
       </div>
@@ -91,4 +97,4 @@ const SignIn: React.FC = () => {
   )
 }
 
-export default SignIn
+export default SignUpPage

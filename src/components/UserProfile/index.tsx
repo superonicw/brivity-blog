@@ -8,7 +8,11 @@ const UserProfile: React.FC = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false)
 
   if (!user.profile) {
-    return null
+    return (
+      <div className="absolute right-10 top-1/2 -translate-y-1/2 text-white">
+        <Link label="Log In" to="/login" />
+      </div>
+    )
   }
 
   const toggleMenu = () => setShowMenu(prevState => !prevState)

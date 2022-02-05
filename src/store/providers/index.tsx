@@ -6,16 +6,17 @@ import {
   ReactNode,
 } from 'react'
 import {
+  GetCommentsRequestPayload,
   Pagination,
   Post,
   SignInRequestPayload,
   SignUpRequestPayload,
   User,
-} from 'types'
+  Comment,
+} from 'config/types'
 import { API_CONFIG } from 'config/api'
 import {
   AppReducer,
-  INITIAL_STATE,
   signIn,
   signInFail,
   signInSuccess,
@@ -23,8 +24,19 @@ import {
   signUpFail,
   signUpSuccess,
   signOut,
+  getPosts,
+  getPostsSuccess,
+  getPostsFail,
+  getPost,
+  getPostSuccess,
+  getPostFail,
+  getComments,
+  getCommentsSuccess,
+  getCommentsFail,
+  getInitialState,
 } from 'store/reducers'
 import { apiRequest } from 'utils'
+import { API_TOKEN_KEY, USER_PROFILE } from 'config/base'
 
 export interface AppContextType {
   user: {
@@ -33,17 +45,28 @@ export interface AppContextType {
     error: any
   }
   posts: {
-    data: Post[]
-    meta: Pagination | {}
+    posts: Post[]
+    meta: Pagination
     loading: boolean
+    error: any
   }
   post: {
-    data: Post | null
+    post: Post | null
     loading: boolean
+    error: any
   }
-  onSignIn: (data: SignInRequestPayload) => void
-  onSignUp: (data: SignUpRequestPayload) => void
+  comments: {
+    comments: Comment[]
+    meta: Pagination
+    loading: boolean
+    error: null
+  }
+  onSignIn: (payload: SignInRequestPayload) => void
+  onSignUp: (payload: SignUpRequestPayload) => void
   onSignOut: () => void
+  onGetPosts: (params?: any) => void
+  onGetPost: (postId: string) => void
+  onGetComments: (payload: GetCommentsRequestPayload) => void
 }
 
 export interface AppProviderType {
@@ -54,13 +77,15 @@ const AppContext = createContext<AppContextType>(null!)
 AppContext.displayName = 'App'
 
 export const AppProvider = ({ children }: AppProviderType) => {
-  const [state, dispatch] = useReducer(AppReducer, INITIAL_STATE)
+  const [state, dispatch] = useReducer(AppReducer, getInitialState())
 
   const onSignIn = useCallback(payload => {
     dispatch(signIn(payload))
 
     apiRequest(API_CONFIG.signIn(payload))
-      .then(({ data }) => {
+      .then(({ data, headers }) => {
+        localStorage.setItem(API_TOKEN_KEY, headers.authorization)
+        localStorage.setItem(USER_PROFILE, JSON.stringify(data))
         dispatch(signInSuccess(data))
       })
       .catch(error => {
@@ -81,11 +106,63 @@ export const AppProvider = ({ children }: AppProviderType) => {
   }, [])
 
   const onSignOut = useCallback(() => {
+    localStorage.removeItem(API_TOKEN_KEY)
+    localStorage.removeItem(USER_PROFILE)
     dispatch(signOut())
   }, [])
 
+  const onGetPosts = useCallback(payload => {
+    dispatch(getPosts(payload))
+
+    apiRequest(API_CONFIG.getPosts(payload))
+      .then(({ data }) => {
+        dispatch(getPostsSuccess(data))
+      })
+      .catch(error => {
+        dispatch(getPostsFail(error))
+      })
+  }, [])
+
+  const onGetComments = useCallback(payload => {
+    dispatch(getComments(payload))
+
+    apiRequest(API_CONFIG.getComments(payload))
+      .then(({ data }) => {
+        dispatch(getCommentsSuccess(data))
+      })
+      .catch(error => {
+        dispatch(getCommentsFail(error))
+      })
+  }, [])
+
+  const onGetPost = useCallback(
+    payload => {
+      dispatch(getPost(payload))
+
+      apiRequest(API_CONFIG.getPost(payload))
+        .then(({ data }) => {
+          dispatch(getPostSuccess(data))
+          onGetComments({ id: payload })
+        })
+        .catch(error => {
+          dispatch(getPostFail(error))
+        })
+    },
+    [onGetComments],
+  )
+
   return (
-    <AppContext.Provider value={{ ...state, onSignIn, onSignUp, onSignOut }}>
+    <AppContext.Provider
+      value={{
+        ...state,
+        onSignIn,
+        onSignUp,
+        onSignOut,
+        onGetPosts,
+        onGetPost,
+        onGetComments,
+      }}
+    >
       {children}
     </AppContext.Provider>
   )

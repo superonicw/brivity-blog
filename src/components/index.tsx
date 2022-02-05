@@ -1,2 +1,5 @@
 export { default as Navbar } from './Navbar'
 export { default as UserProfile } from './UserProfile'
+export { default as Post } from './Post'
+export { default as Comment } from './Comment'
+export { default as Loader } from './Loader'

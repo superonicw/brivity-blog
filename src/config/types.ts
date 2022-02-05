@@ -42,3 +42,8 @@ export interface SignUpRequestPayload {
   password: string
   display_name: string
 }
+
+export interface GetCommentsRequestPayload {
+  id: string
+  params: any
+}

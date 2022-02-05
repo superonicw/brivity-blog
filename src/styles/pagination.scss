@@ -1,0 +1,27 @@
+.rc-pagination {
+  display: flex;
+  gap: theme('gap.2');
+
+  &-item,
+  &-prev,
+  &-next {
+    padding: theme('padding.2');
+    border-radius: theme('borderRadius.md');
+    border-width: theme('borderWidth.DEFAULT');
+    border-color: theme('borderColor.sky.500');
+    color: theme('colors.sky.500');
+    width: theme('width.10');
+    text-align: center;
+    cursor: theme('cursor.pointer');
+  }
+
+  &-disabled {
+    opacity: theme('opacity.30');
+    cursor: theme('cursor.not-allowed');
+  }
+
+  &-item-active {
+    background-color: theme('backgroundColor.sky.500');
+    color: theme('colors.white');
+  }
+}

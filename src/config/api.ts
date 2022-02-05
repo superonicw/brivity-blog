@@ -1,4 +1,8 @@
-import { SignInRequestPayload, SignUpRequestPayload } from 'types'
+import {
+  SignInRequestPayload,
+  SignUpRequestPayload,
+  GetCommentsRequestPayload,
+} from 'config/types'
 
 export const API_CONFIG = {
   signIn: (payload: SignInRequestPayload) => ({
@@ -10,5 +14,19 @@ export const API_CONFIG = {
     method: 'POST',
     url: '/users',
     data: { user: payload },
+  }),
+  getPosts: (params: any) => ({
+    method: 'GET',
+    url: '/posts',
+    params,
+  }),
+  getPost: (id: string) => ({
+    method: 'GET',
+    url: `/posts/${id}`,
+  }),
+  getComments: ({ id, params }: GetCommentsRequestPayload) => ({
+    method: 'GET',
+    url: `/posts/${id}/comments`,
+    params,
   }),
 }

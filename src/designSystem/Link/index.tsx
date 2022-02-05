@@ -33,8 +33,8 @@ export const Link: React.FC<LinkProps> = ({
 
   if (to) {
     return (
-      <RouterLink to={to}>
-        <span className={cn}>{label}</span>
+      <RouterLink to={to} className={cn}>
+        {label}
       </RouterLink>
     )
   }

@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Button, Input, Link } from 'designSystem'
 import { useAppProvider } from 'store/providers'
 
-const SignIn: React.FC = () => {
+const SignInPage: React.FC = () => {
   const { user, onSignIn } = useAppProvider()
 
   const {
@@ -68,7 +68,7 @@ const SignIn: React.FC = () => {
             />
             <Link
               to="/register"
-              label="Sign Up"
+              label="Register"
               className="text-slate-500 text-sm"
               disabled={user.loading}
             />
@@ -79,4 +79,4 @@ const SignIn: React.FC = () => {
   )
 }
 
-export default SignIn
+export default SignInPage
