@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 
 export interface InputProps {
-  type?: 'email' | 'text' | 'password'
+  type?: 'email' | 'text' | 'password' | 'textarea'
   size?: 'sm' | 'md' | 'lg'
   className?: string
   placeholder?: string
@@ -18,27 +18,35 @@ export const Input: React.FC<InputProps> = ({
   disabled = false,
   error = '',
   ...rest
-}) => (
-  <>
-    <input
-      type={type}
-      placeholder={placeholder}
-      className={classNames(
-        'border rounded outline-none p-2 w-full',
-        {
-          'text-sm': size === 'sm',
-          'text-md': size === 'md',
-          'text-lg': size === 'lg',
-          'border-red-500 text-red-500': !!error,
-          'focus:border-blue-500': !error,
-        },
-        className,
+}) => {
+  const elemProps = {
+    type,
+    placeholder,
+    disabled,
+    className: classNames(
+      'border rounded outline-none p-2 w-full',
+      {
+        'text-sm': size === 'sm',
+        'text-md': size === 'md',
+        'text-lg': size === 'lg',
+        'border-red-500 text-red-500': !!error,
+        'focus:border-blue-500': !error,
+      },
+      className,
+    ),
+    ...rest,
+  }
+
+  return (
+    <>
+      {type === 'textarea' ? (
+        <textarea {...elemProps} />
+      ) : (
+        <input {...elemProps} />
       )}
-      disabled={disabled}
-      {...rest}
-    />
-    {error && (
-      <div className="text-left text-sm pl-2 mt text-red-500">{error}</div>
-    )}
-  </>
-)
+      {error && (
+        <div className="text-left text-sm pl-2 mt text-red-500">{error}</div>
+      )}
+    </>
+  )
+}

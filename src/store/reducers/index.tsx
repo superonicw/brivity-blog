@@ -247,6 +247,67 @@ export const AppReducer = (
         },
       })
 
+    case CREATE_POST:
+      return update(state, {
+        post: {
+          $merge: {
+            loading: true,
+            error: null,
+          },
+        },
+      })
+
+    case successAction(CREATE_POST):
+      return update(state, {
+        post: {
+          $merge: {
+            loading: false,
+          },
+        },
+      })
+
+    case failAction(CREATE_POST):
+      return update(state, {
+        post: {
+          $merge: {
+            loading: false,
+            error: payload,
+          },
+        },
+      })
+
+    case UPDATE_POST:
+    case DELETE_POST:
+      return update(state, {
+        posts: {
+          $merge: {
+            loading: true,
+            error: null,
+          },
+        },
+      })
+
+    case successAction(UPDATE_POST):
+    case successAction(DELETE_POST):
+      return update(state, {
+        posts: {
+          $merge: {
+            loading: false,
+          },
+        },
+      })
+
+    case failAction(UPDATE_POST):
+    case failAction(DELETE_POST):
+      return update(state, {
+        posts: {
+          $merge: {
+            loading: false,
+            error: payload,
+          },
+        },
+      })
+
     default:
       return state
   }

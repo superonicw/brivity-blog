@@ -2,6 +2,8 @@ import {
   SignInRequestPayload,
   SignUpRequestPayload,
   GetCommentsRequestPayload,
+  CreatePostRequestPayload,
+  UpdatePostRequestPayload,
 } from 'config/types'
 
 export const API_CONFIG = {
@@ -20,7 +22,7 @@ export const API_CONFIG = {
     url: '/posts',
     params,
   }),
-  getPost: (id: string) => ({
+  getPost: (id: number) => ({
     method: 'GET',
     url: `/posts/${id}`,
   }),
@@ -28,5 +30,19 @@ export const API_CONFIG = {
     method: 'GET',
     url: `/posts/${id}/comments`,
     params,
+  }),
+  createPost: (payload: CreatePostRequestPayload) => ({
+    method: 'POST',
+    url: '/posts',
+    data: { post: payload },
+  }),
+  updatePost: (payload: UpdatePostRequestPayload) => ({
+    method: 'PATCH',
+    url: `/posts/${payload.id}`,
+    data: { post: payload.data },
+  }),
+  deletePost: (id: number) => ({
+    method: 'DELETE',
+    url: `/posts/${id}`,
   }),
 }

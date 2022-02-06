@@ -1,19 +1,47 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Pagination from 'rc-pagination'
 import { useAppProvider } from 'store/providers'
 import { Loader, Post } from 'components'
-import { Button, Link } from 'designSystem'
+import { Button, Link, Modal } from 'designSystem'
+import { PostForm } from 'components/Forms'
+import { Post as PostType } from 'config/types'
 
 const PostsPage = () => {
-  const { user, posts, onGetPosts } = useAppProvider()
+  const { user, posts, onGetPosts, onCreatePost, onUpdatePost, onDeletePost } =
+    useAppProvider()
+
+  const [showForm, setShowForm] = useState<boolean>(false)
+  const [editingPost, setEditingPost] = useState<PostType | null>(null)
 
   useEffect(() => {
     onGetPosts({ page: 1 })
   }, [onGetPosts])
 
+  useEffect(() => {
+    if (!posts.loading && !posts.error) {
+      setShowForm(false)
+      setEditingPost(null)
+    }
+  }, [posts.loading, posts.error])
+
   const handlePaginationChange = (page: number) => {
     onGetPosts({ page })
   }
+
+  const handleEdit = (post: PostType) => {
+    setEditingPost(post)
+    setShowForm(true)
+  }
+
+  const handlePostSubmit = (values: any) => {
+    if (!editingPost) {
+      onCreatePost(values)
+    } else {
+      onUpdatePost({ id: editingPost.id, data: values })
+    }
+  }
+
+  const toggleShowAddForm = () => setShowForm(prevState => !prevState)
 
   const pagination = (
     <Pagination
@@ -33,20 +61,41 @@ const PostsPage = () => {
       <h1 className="flex items-center text-4xl font-bold">
         Posts{' '}
         {user.profile ? (
-          <Button label="+" size="sm" className="ml-4" />
+          <Button
+            label="+"
+            size="sm"
+            className="ml-4"
+            onClick={toggleShowAddForm}
+          />
         ) : (
           <Link
             to="/login"
-            label="Please login first to create posts"
+            label="Create Posts"
             className="text-xs text-slate-500 ml-4"
           />
         )}
       </h1>
+      {showForm && (
+        <Modal onClose={toggleShowAddForm}>
+          <PostForm
+            defaultValues={editingPost}
+            loading={posts.loading}
+            error={posts.error}
+            onSubmit={handlePostSubmit}
+          />
+        </Modal>
+      )}
       <div className="flex justify-end">{pagination}</div>
       <div className="relative grid gap-4 my-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {posts.loading && <Loader />}
         {posts.posts.map(post => (
-          <Post key={post.id} post={post} />
+          <Post
+            key={post.id}
+            post={post}
+            currentUser={user.profile}
+            onEdit={() => handleEdit(post)}
+            onDelete={() => onDeletePost(post.id)}
+          />
         ))}
       </div>
       <div className="flex justify-end">{pagination}</div>

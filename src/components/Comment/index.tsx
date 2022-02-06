@@ -18,7 +18,7 @@ const Comment: React.FC<CommentProps> = ({ comment, currentUser }) => {
       {!currentUser && (
         <Link
           to="/login"
-          label="Please login first to edit or delete this comment"
+          label="Edit or Delete"
           className="text-xs text-slate-500"
         />
       )}

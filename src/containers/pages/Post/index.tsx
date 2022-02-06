@@ -12,7 +12,7 @@ const PostPage: React.FC = () => {
 
   useEffect(() => {
     if (postId) {
-      onGetPost(postId)
+      onGetPost(Number(postId))
     }
   }, [postId, onGetPost])
 
@@ -30,7 +30,7 @@ const PostPage: React.FC = () => {
 
   const handlePaginationChange = (page: number) => {
     if (post.post) {
-      onGetComments({ id: String(post.post.id), params: { page } })
+      onGetComments({ id: post.post.id, params: { page } })
     }
   }
 
@@ -64,7 +64,7 @@ const PostPage: React.FC = () => {
           ) : (
             <Link
               to="/login"
-              label="Please login first to leave comments"
+              label="Leave Comments"
               className="text-xs text-slate-500 ml-4"
             />
           )}

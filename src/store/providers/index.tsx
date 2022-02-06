@@ -6,13 +6,15 @@ import {
   ReactNode,
 } from 'react'
 import {
-  GetCommentsRequestPayload,
   Pagination,
   Post,
-  SignInRequestPayload,
-  SignUpRequestPayload,
   User,
   Comment,
+  GetCommentsRequestPayload,
+  SignInRequestPayload,
+  SignUpRequestPayload,
+  CreatePostRequestPayload,
+  UpdatePostRequestPayload,
 } from 'config/types'
 import { API_CONFIG } from 'config/api'
 import {
@@ -34,6 +36,15 @@ import {
   getCommentsSuccess,
   getCommentsFail,
   getInitialState,
+  createPost,
+  createPostSuccess,
+  createPostFail,
+  updatePost,
+  updatePostSuccess,
+  updatePostFail,
+  deletePost,
+  deletePostSuccess,
+  deletePostFail,
 } from 'store/reducers'
 import { apiRequest } from 'utils'
 import { API_TOKEN_KEY, USER_PROFILE } from 'config/base'
@@ -65,8 +76,11 @@ export interface AppContextType {
   onSignUp: (payload: SignUpRequestPayload) => void
   onSignOut: () => void
   onGetPosts: (params?: any) => void
-  onGetPost: (postId: string) => void
+  onGetPost: (postId: number) => void
   onGetComments: (payload: GetCommentsRequestPayload) => void
+  onCreatePost: (payload: CreatePostRequestPayload) => void
+  onUpdatePost: (payload: UpdatePostRequestPayload) => void
+  onDeletePost: (postId: number) => void
 }
 
 export interface AppProviderType {
@@ -151,6 +165,54 @@ export const AppProvider = ({ children }: AppProviderType) => {
     [onGetComments],
   )
 
+  const onCreatePost = useCallback(
+    payload => {
+      dispatch(createPost(payload))
+
+      apiRequest(API_CONFIG.createPost(payload))
+        .then(({ data }) => {
+          dispatch(createPostSuccess(data))
+          onGetPosts({ page: 1 })
+        })
+        .catch(error => {
+          dispatch(createPostFail(error))
+        })
+    },
+    [onGetPosts],
+  )
+
+  const onUpdatePost = useCallback(
+    payload => {
+      dispatch(updatePost(payload))
+
+      apiRequest(API_CONFIG.updatePost(payload))
+        .then(({ data }) => {
+          dispatch(updatePostSuccess(data))
+          onGetPosts({ page: state.posts.meta.current_page })
+        })
+        .catch(error => {
+          dispatch(updatePostFail(error))
+        })
+    },
+    [state.posts.meta.current_page, onGetPosts],
+  )
+
+  const onDeletePost = useCallback(
+    payload => {
+      dispatch(deletePost(payload))
+
+      apiRequest(API_CONFIG.deletePost(payload))
+        .then(({ data }) => {
+          dispatch(deletePostSuccess(data))
+          onGetPosts({ page: state.posts.meta.current_page })
+        })
+        .catch(error => {
+          dispatch(deletePostFail(error))
+        })
+    },
+    [state.posts.meta.current_page, onGetPosts],
+  )
+
   return (
     <AppContext.Provider
       value={{
@@ -161,6 +223,9 @@ export const AppProvider = ({ children }: AppProviderType) => {
         onGetPosts,
         onGetPost,
         onGetComments,
+        onCreatePost,
+        onUpdatePost,
+        onDeletePost,
       }}
     >
       {children}
