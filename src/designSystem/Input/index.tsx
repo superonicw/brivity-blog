@@ -6,7 +6,7 @@ export interface InputProps {
   className?: string
   placeholder?: string
   disabled?: boolean
-  error?: string | boolean
+  error?: string
   onClick?: () => void
 }
 

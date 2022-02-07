@@ -13,7 +13,7 @@ export const Alert: React.FC<AlertProps> = ({
 }) => (
   <div
     className={classNames(
-      'border border-solid bg-opacity-25 rounded p-2',
+      'border border-solid bg-opacity-25 rounded px-4 py-2',
       {
         'border-red-300 bg-red-300 text-red-700': type === 'danger',
         'border-green-300 bg-green-300 text-green-700': type === 'info',
