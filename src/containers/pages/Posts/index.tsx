@@ -20,9 +20,14 @@ const PostsPage = () => {
   useEffect(() => {
     if (!posts.loading && !posts.error) {
       setShowForm(false)
-      setEditingPost(null)
     }
   }, [posts.loading, posts.error])
+
+  useEffect(() => {
+    if (!showForm) {
+      setEditingPost(null)
+    }
+  }, [showForm])
 
   const handlePaginationChange = (page: number) => {
     onGetPosts({ page })

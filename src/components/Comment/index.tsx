@@ -51,7 +51,7 @@ const Comment: React.FC<CommentProps> = ({
       )}
       {showConfirmModal && (
         <ConfirmModal
-          title="Are you sure you want to delete this post?"
+          title="Are you sure you want to delete this comment?"
           onOk={handleDelete}
           onCancel={() => setShowConfirmModal(false)}
         />

@@ -115,7 +115,7 @@ export const AppProvider = ({ children }: AppProviderType) => {
       response => response,
       error => {
         if (error.response.status === 401) {
-          dispatch(signOut())
+          signOut()
         }
         return error
       },
@@ -131,8 +131,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
         localStorage.setItem(USER_PROFILE, JSON.stringify(data))
         dispatch(signInSuccess(data))
       })
-      .catch(error => {
-        dispatch(signInFail(error))
+      .catch(() => {
+        dispatch(signInFail('Invalid email or password'))
       })
   }, [])
 
@@ -143,8 +143,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
       .then(({ data }) => {
         dispatch(signUpSuccess(data))
       })
-      .catch(error => {
-        dispatch(signUpFail(error))
+      .catch(() => {
+        dispatch(signUpFail('Failed to create an account'))
       })
   }, [])
 
@@ -161,8 +161,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
       .then(({ data }) => {
         dispatch(getPostsSuccess(data))
       })
-      .catch(error => {
-        dispatch(getPostsFail(error))
+      .catch(() => {
+        dispatch(getPostsFail('Failed to get posts'))
       })
   }, [])
 
@@ -173,8 +173,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
       .then(({ data }) => {
         dispatch(getCommentsSuccess(data))
       })
-      .catch(error => {
-        dispatch(getCommentsFail(error))
+      .catch(() => {
+        dispatch(getCommentsFail('Failed to get comments'))
       })
   }, [])
 
@@ -187,8 +187,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
           dispatch(getPostSuccess(data))
           onGetComments({ id: payload })
         })
-        .catch(error => {
-          dispatch(getPostFail(error))
+        .catch(() => {
+          dispatch(getPostFail('Failed to get the post'))
         })
     },
     [onGetComments],
@@ -203,8 +203,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
           dispatch(createPostSuccess(data))
           onGetPosts({ page: 1 })
         })
-        .catch(error => {
-          dispatch(createPostFail(error))
+        .catch(() => {
+          dispatch(createPostFail('Failed to create a post'))
         })
     },
     [onGetPosts],
@@ -219,8 +219,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
           dispatch(updatePostSuccess(data))
           onGetPosts({ page: state.posts.meta.current_page })
         })
-        .catch(error => {
-          dispatch(updatePostFail(error))
+        .catch(() => {
+          dispatch(updatePostFail('Failed to update the post'))
         })
     },
     [state.posts.meta.current_page, onGetPosts],
@@ -235,8 +235,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
           dispatch(deletePostSuccess(data))
           onGetPosts({ page: state.posts.meta.current_page })
         })
-        .catch(error => {
-          dispatch(deletePostFail(error))
+        .catch(() => {
+          dispatch(deletePostFail('Failed to delete the post'))
         })
     },
     [state.posts.meta.current_page, onGetPosts],
@@ -251,8 +251,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
           dispatch(createCommentSuccess(data))
           onGetComments({ id: payload.post_id, params: { page: 1 } })
         })
-        .catch(error => {
-          dispatch(createCommentFail(error))
+        .catch(() => {
+          dispatch(createCommentFail('Failed to leave a comment'))
         })
     },
     [onGetComments],
@@ -270,8 +270,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
             params: { page: state.comments.meta.current_page },
           })
         })
-        .catch(error => {
-          dispatch(updateCommentFail(error))
+        .catch(() => {
+          dispatch(updateCommentFail('Failed to update the comment'))
         })
     },
     [state.comments.meta.current_page, onGetComments],
@@ -289,8 +289,8 @@ export const AppProvider = ({ children }: AppProviderType) => {
             params: { page: state.comments.meta.current_page },
           })
         })
-        .catch(error => {
-          dispatch(deleteCommentFail(error))
+        .catch(() => {
+          dispatch(deleteCommentFail('Failed to delete the comment'))
         })
     },
     [state.comments.meta.current_page, onGetComments],

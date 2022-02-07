@@ -5,12 +5,12 @@ export interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
   return (
-    <div className="fixed inset-0 z-10">
+    <div className="fixed inset-0 z-10" data-testid="modal">
       <div className="absolute inset-0 bg-black opacity-30" onClick={onClose} />
 
       <div
         className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-        p-8 bg-white rounded`}
+        p-8 bg-white rounded md:min-w-540`}
       >
         <span
           className={`flex items-center justify-center

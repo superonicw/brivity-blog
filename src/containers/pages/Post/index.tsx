@@ -4,7 +4,7 @@ import Pagination from 'rc-pagination'
 import moment from 'moment'
 import { useAppProvider } from 'store/providers'
 import { Comment as CommentType } from 'config/types'
-import { Button, Link, Spinner, Modal } from 'designSystem'
+import { Button, Link, Spinner, Modal, Alert } from 'designSystem'
 import { Comment, Loader } from 'components'
 import { CommentForm } from 'components/Forms'
 
@@ -33,9 +33,14 @@ const PostPage: React.FC = () => {
   useEffect(() => {
     if (!comments.loading && !comments.error) {
       setShowCommentForm(false)
-      setEditingComment(null)
     }
   }, [comments.loading, comments.error])
+
+  useEffect(() => {
+    if (!showCommentForm) {
+      setEditingComment(null)
+    }
+  }, [showCommentForm])
 
   if (post.loading) {
     return (
@@ -46,7 +51,7 @@ const PostPage: React.FC = () => {
   }
 
   if (!post.post) {
-    return null
+    return <Alert type="danger" message={post.error} />
   }
 
   const handlePaginationChange = (page: number) => {

@@ -41,6 +41,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
           render={({ field }) => (
             <Input
               {...field}
+              type="textarea"
               className="border rounded outline-none p-2 w-full"
               placeholder="Content"
               disabled={loading}
