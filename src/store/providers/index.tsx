@@ -10,11 +10,14 @@ import {
   Post,
   User,
   Comment,
-  GetCommentsRequestPayload,
   SignInRequestPayload,
   SignUpRequestPayload,
   CreatePostRequestPayload,
   UpdatePostRequestPayload,
+  GetCommentsRequestPayload,
+  CreateCommentRequestPayload,
+  UpdateCommentRequestPayload,
+  DeleteCommentRequestPayload,
 } from 'config/types'
 import { API_CONFIG } from 'config/api'
 import {
@@ -32,9 +35,6 @@ import {
   getPost,
   getPostSuccess,
   getPostFail,
-  getComments,
-  getCommentsSuccess,
-  getCommentsFail,
   getInitialState,
   createPost,
   createPostSuccess,
@@ -45,9 +45,23 @@ import {
   deletePost,
   deletePostSuccess,
   deletePostFail,
+  getComments,
+  getCommentsSuccess,
+  getCommentsFail,
+  createComment,
+  createCommentSuccess,
+  createCommentFail,
+  updateComment,
+  updateCommentSuccess,
+  updateCommentFail,
+  deleteComment,
+  deleteCommentSuccess,
+  deleteCommentFail,
 } from 'store/reducers'
 import { apiRequest } from 'utils'
 import { API_TOKEN_KEY, USER_PROFILE } from 'config/base'
+import { useEffect } from 'react'
+import axios from 'axios'
 
 export interface AppContextType {
   user: {
@@ -70,17 +84,20 @@ export interface AppContextType {
     comments: Comment[]
     meta: Pagination
     loading: boolean
-    error: null
+    error: any
   }
   onSignIn: (payload: SignInRequestPayload) => void
   onSignUp: (payload: SignUpRequestPayload) => void
   onSignOut: () => void
   onGetPosts: (params?: any) => void
   onGetPost: (postId: number) => void
-  onGetComments: (payload: GetCommentsRequestPayload) => void
   onCreatePost: (payload: CreatePostRequestPayload) => void
   onUpdatePost: (payload: UpdatePostRequestPayload) => void
   onDeletePost: (postId: number) => void
+  onGetComments: (payload: GetCommentsRequestPayload) => void
+  onCreateComment: (payload: CreateCommentRequestPayload) => void
+  onUpdateComment: (payload: UpdateCommentRequestPayload) => void
+  onDeleteComment: (paylaod: DeleteCommentRequestPayload) => void
 }
 
 export interface AppProviderType {
@@ -92,6 +109,18 @@ AppContext.displayName = 'App'
 
 export const AppProvider = ({ children }: AppProviderType) => {
   const [state, dispatch] = useReducer(AppReducer, getInitialState())
+
+  useEffect(() => {
+    axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response.status === 401) {
+          dispatch(signOut())
+        }
+        return error
+      },
+    )
+  }, [dispatch])
 
   const onSignIn = useCallback(payload => {
     dispatch(signIn(payload))
@@ -213,6 +242,60 @@ export const AppProvider = ({ children }: AppProviderType) => {
     [state.posts.meta.current_page, onGetPosts],
   )
 
+  const onCreateComment = useCallback(
+    payload => {
+      dispatch(createComment(payload))
+
+      apiRequest(API_CONFIG.createComment(payload))
+        .then(({ data }) => {
+          dispatch(createCommentSuccess(data))
+          onGetComments({ id: payload.post_id, params: { page: 1 } })
+        })
+        .catch(error => {
+          dispatch(createCommentFail(error))
+        })
+    },
+    [onGetComments],
+  )
+
+  const onUpdateComment = useCallback(
+    payload => {
+      dispatch(updateComment(payload))
+
+      apiRequest(API_CONFIG.updateComment(payload))
+        .then(({ data }) => {
+          dispatch(updateCommentSuccess(data))
+          onGetComments({
+            id: payload.postId,
+            params: { page: state.comments.meta.current_page },
+          })
+        })
+        .catch(error => {
+          dispatch(updateCommentFail(error))
+        })
+    },
+    [state.comments.meta.current_page, onGetComments],
+  )
+
+  const onDeleteComment = useCallback(
+    payload => {
+      dispatch(deleteComment(payload))
+
+      apiRequest(API_CONFIG.deleteComment(payload.id))
+        .then(({ data }) => {
+          dispatch(deleteCommentSuccess(data))
+          onGetComments({
+            id: payload.postId,
+            params: { page: state.comments.meta.current_page },
+          })
+        })
+        .catch(error => {
+          dispatch(deleteCommentFail(error))
+        })
+    },
+    [state.comments.meta.current_page, onGetComments],
+  )
+
   return (
     <AppContext.Provider
       value={{
@@ -226,6 +309,9 @@ export const AppProvider = ({ children }: AppProviderType) => {
         onCreatePost,
         onUpdatePost,
         onDeletePost,
+        onCreateComment,
+        onUpdateComment,
+        onDeleteComment,
       }}
     >
       {children}

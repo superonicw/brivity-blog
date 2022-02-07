@@ -1,20 +1,41 @@
-import React, { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Pagination from 'rc-pagination'
 import moment from 'moment'
 import { useAppProvider } from 'store/providers'
-import { Button, Link, Spinner } from 'designSystem'
+import { Comment as CommentType } from 'config/types'
+import { Button, Link, Spinner, Modal } from 'designSystem'
 import { Comment, Loader } from 'components'
+import { CommentForm } from 'components/Forms'
 
 const PostPage: React.FC = () => {
   const { postId } = useParams()
-  const { user, post, comments, onGetPost, onGetComments } = useAppProvider()
+  const {
+    user,
+    post,
+    comments,
+    onGetPost,
+    onGetComments,
+    onCreateComment,
+    onUpdateComment,
+    onDeleteComment,
+  } = useAppProvider()
+
+  const [showCommentForm, setShowCommentForm] = useState<boolean>(false)
+  const [editingComment, setEditingComment] = useState<CommentType | null>(null)
 
   useEffect(() => {
     if (postId) {
       onGetPost(Number(postId))
     }
   }, [postId, onGetPost])
+
+  useEffect(() => {
+    if (!comments.loading && !comments.error) {
+      setShowCommentForm(false)
+      setEditingComment(null)
+    }
+  }, [comments.loading, comments.error])
 
   if (post.loading) {
     return (
@@ -33,6 +54,30 @@ const PostPage: React.FC = () => {
       onGetComments({ id: post.post.id, params: { page } })
     }
   }
+
+  const handleEdit = (post: CommentType) => {
+    setEditingComment(post)
+    setShowCommentForm(true)
+  }
+
+  const handleCommentSubmit = (values: any) => {
+    if (!editingComment) {
+      onCreateComment({ ...values, post_id: Number(postId) })
+    } else {
+      onUpdateComment({
+        postId: Number(postId),
+        id: editingComment.id,
+        data: values,
+      })
+    }
+  }
+
+  const handleDelete = (commentId: number) => {
+    onDeleteComment({ postId: Number(postId), id: commentId })
+  }
+
+  const toggleShowCommentForm = () =>
+    setShowCommentForm(prevState => !prevState)
 
   const pagination = (
     <Pagination
@@ -60,7 +105,12 @@ const PostPage: React.FC = () => {
         <div className="flex items-center text-slate-500 text-xl mb-4">
           Comments{' '}
           {user.profile ? (
-            <Button label="+" size="sm" className="ml-4" />
+            <Button
+              label="+"
+              size="sm"
+              className="ml-4"
+              onClick={toggleShowCommentForm}
+            />
           ) : (
             <Link
               to="/login"
@@ -77,11 +127,23 @@ const PostPage: React.FC = () => {
               key={comment.id}
               comment={comment}
               currentUser={user.profile}
+              onEdit={() => handleEdit(comment)}
+              onDelete={() => handleDelete(comment.id)}
             />
           ))}
         </div>
         <div className="flex justify-end">{pagination}</div>
       </div>
+      {showCommentForm && (
+        <Modal onClose={toggleShowCommentForm}>
+          <CommentForm
+            defaultValues={editingComment}
+            loading={comments.loading}
+            error={comments.error}
+            onSubmit={handleCommentSubmit}
+          />
+        </Modal>
+      )}
     </div>
   )
 }

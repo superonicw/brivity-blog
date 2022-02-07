@@ -43,11 +43,6 @@ export interface SignUpRequestPayload {
   display_name: string
 }
 
-export interface GetCommentsRequestPayload {
-  id: number
-  params: any
-}
-
 export interface CreatePostRequestPayload {
   title: string
   body: string
@@ -59,4 +54,27 @@ export interface UpdatePostRequestPayload {
     title: string
     body: string
   }
+}
+
+export interface GetCommentsRequestPayload {
+  id: number
+  params: any
+}
+
+export interface CreateCommentRequestPayload {
+  post_id: number
+  content: string
+}
+
+export interface UpdateCommentRequestPayload {
+  postId: number
+  id: number
+  data: {
+    content: string
+  }
+}
+
+export interface DeleteCommentRequestPayload {
+  postId: number
+  id: number
 }

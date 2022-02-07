@@ -248,34 +248,6 @@ export const AppReducer = (
       })
 
     case CREATE_POST:
-      return update(state, {
-        post: {
-          $merge: {
-            loading: true,
-            error: null,
-          },
-        },
-      })
-
-    case successAction(CREATE_POST):
-      return update(state, {
-        post: {
-          $merge: {
-            loading: false,
-          },
-        },
-      })
-
-    case failAction(CREATE_POST):
-      return update(state, {
-        post: {
-          $merge: {
-            loading: false,
-            error: payload,
-          },
-        },
-      })
-
     case UPDATE_POST:
     case DELETE_POST:
       return update(state, {
@@ -287,6 +259,7 @@ export const AppReducer = (
         },
       })
 
+    case successAction(CREATE_POST):
     case successAction(UPDATE_POST):
     case successAction(DELETE_POST):
       return update(state, {
@@ -297,10 +270,46 @@ export const AppReducer = (
         },
       })
 
+    case failAction(CREATE_POST):
     case failAction(UPDATE_POST):
     case failAction(DELETE_POST):
       return update(state, {
         posts: {
+          $merge: {
+            loading: false,
+            error: payload,
+          },
+        },
+      })
+
+    case CREATE_COMMENT:
+    case UPDATE_COMMENT:
+    case DELETE_COMMENT:
+      return update(state, {
+        comments: {
+          $merge: {
+            loading: true,
+            error: null,
+          },
+        },
+      })
+
+    case successAction(CREATE_COMMENT):
+    case successAction(UPDATE_COMMENT):
+    case successAction(DELETE_COMMENT):
+      return update(state, {
+        comments: {
+          $merge: {
+            loading: false,
+          },
+        },
+      })
+
+    case failAction(CREATE_COMMENT):
+    case failAction(UPDATE_COMMENT):
+    case failAction(DELETE_COMMENT):
+      return update(state, {
+        comments: {
           $merge: {
             loading: false,
             error: payload,

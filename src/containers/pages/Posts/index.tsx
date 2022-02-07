@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import Pagination from 'rc-pagination'
 import { useAppProvider } from 'store/providers'
 import { Loader, Post } from 'components'
+import { Post as PostType } from 'config/types'
 import { Button, Link, Modal } from 'designSystem'
 import { PostForm } from 'components/Forms'
-import { Post as PostType } from 'config/types'
 
 const PostsPage = () => {
   const { user, posts, onGetPosts, onCreatePost, onUpdatePost, onDeletePost } =
@@ -75,16 +75,6 @@ const PostsPage = () => {
           />
         )}
       </h1>
-      {showForm && (
-        <Modal onClose={toggleShowAddForm}>
-          <PostForm
-            defaultValues={editingPost}
-            loading={posts.loading}
-            error={posts.error}
-            onSubmit={handlePostSubmit}
-          />
-        </Modal>
-      )}
       <div className="flex justify-end">{pagination}</div>
       <div className="relative grid gap-4 my-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {posts.loading && <Loader />}
@@ -99,6 +89,17 @@ const PostsPage = () => {
         ))}
       </div>
       <div className="flex justify-end">{pagination}</div>
+
+      {showForm && (
+        <Modal onClose={toggleShowAddForm}>
+          <PostForm
+            defaultValues={editingPost}
+            loading={posts.loading}
+            error={posts.error}
+            onSubmit={handlePostSubmit}
+          />
+        </Modal>
+      )}
     </div>
   )
 }

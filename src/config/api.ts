@@ -4,6 +4,8 @@ import {
   GetCommentsRequestPayload,
   CreatePostRequestPayload,
   UpdatePostRequestPayload,
+  CreateCommentRequestPayload,
+  UpdateCommentRequestPayload,
 } from 'config/types'
 
 export const API_CONFIG = {
@@ -26,11 +28,6 @@ export const API_CONFIG = {
     method: 'GET',
     url: `/posts/${id}`,
   }),
-  getComments: ({ id, params }: GetCommentsRequestPayload) => ({
-    method: 'GET',
-    url: `/posts/${id}/comments`,
-    params,
-  }),
   createPost: (payload: CreatePostRequestPayload) => ({
     method: 'POST',
     url: '/posts',
@@ -44,5 +41,24 @@ export const API_CONFIG = {
   deletePost: (id: number) => ({
     method: 'DELETE',
     url: `/posts/${id}`,
+  }),
+  getComments: ({ id, params }: GetCommentsRequestPayload) => ({
+    method: 'GET',
+    url: `/posts/${id}/comments`,
+    params,
+  }),
+  createComment: (payload: CreateCommentRequestPayload) => ({
+    method: 'POST',
+    url: '/comments',
+    data: { comment: payload },
+  }),
+  updateComment: (payload: UpdateCommentRequestPayload) => ({
+    method: 'PATCH',
+    url: `/comments/${payload.id}`,
+    data: { comment: payload.data },
+  }),
+  deleteComment: (id: number) => ({
+    method: 'DELETE',
+    url: `/comments/${id}`,
   }),
 }
